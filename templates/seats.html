@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Select Seats</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+  <style>
+    .plane { max-width: 980px; margin: 20px auto; }
+    .section { margin: 18px 0; padding: 12px; border: 1px solid #ddd; border-radius: 10px; }
+    table.seat-grid { border-collapse: collapse; margin-top: 10px; width: 100%; }
+    table.seat-grid th, table.seat-grid td { border: 1px solid #eee; padding: 6px; text-align: center; }
+    .rownum { font-weight: bold; background: #fafafa; width: 60px; }
+
+    .seat-btn{
+      min-width: 46px;
+      height: 34px;
+      border-radius: 8px;
+      border: 1px solid #bbb;
+      cursor: pointer;
+    }
+    .seat-btn.sold { background:#999; cursor:not-allowed; }
+    .seat-btn.available { background:#fff; }
+    .seat-btn.selected { background:#7CFC00; }
+
+    .summary { margin: 12px 0; padding: 10px; border: 1px solid #ccc; border-radius: 10px; }
+    .selected-box { margin-top: 10px; font-family: monospace; }
+
+    .actions { margin-top: 16px; display:flex; gap:10px; align-items:center; }
+    .actions button { padding: 10px 14px; border-radius: 10px; border: 1px solid #bbb; cursor:pointer; }
+    .actions input { padding: 10px; border-radius: 10px; border: 1px solid #bbb; }
+
+    .warning { color: #b00020; }
+  </style>
+</head>
+<body>
+<div class="plane">
+  <h1>Select Seats</h1>
+
+  <div class="summary">
+    <div><b>Flight:</b> {{ flight_date }} {{ departure_time }} | {{ flight.Departure_Airport }} → {{ flight.Destination_Airport }}</div>
+    <div><b>Plane ID:</b> {{ plane_id }}</div>
+    <div><b>Available seats:</b> {{ available }}</div>
+    {% if message %}
+      <div class="warning">{{ message }}</div>
+    {% endif %}
+  </div>
+
+  <form method="POST" action="/booking/preview">
+    <input type="hidden" name="flight_date" value="{{ flight_date }}">
+    <input type="hidden" name="departure_time" value="{{ departure_time }}">
+    <input type="hidden" id="selected_seats" name="selected_seats" value="">
+
+    {% if not session.get("username") %}
+      <div class="actions">
+        <input type="email" name="guest_email" placeholder="Your email" required>
+      </div>
+    {% endif %}
+
+    <div class="selected-box">
+      <b>Selected:</b> <span id="selected_text">(none)</span>
+    </div>
+
+    {% for sec in sections %}
+      <div class="section">
+        <h2>{{ sec.class_type }}</h2>
+
+        <table class="seat-grid">
+          <thead>
+            <tr>
+              <th class="rownum">Row</th>
+              {% for L in sec.col_labels %}
+                <th>{{ L }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+          {% for r in sec.grid %}
+            <tr>
+              <td class="rownum">{{ r.row }}</td>
+              {% for s in r.seats %}
+                <td>
+                  {% if s.sold %}
+                    <button type="button"
+                            class="seat-btn sold"
+                            disabled
+                            title="Sold">{{ s.row }}{{ s.label }}</button>
+                  {% else %}
+                    <button type="button"
+                            class="seat-btn available"
+                            data-seat="{{ s.row }}{{ s.label }}"
+                            title="Available">{{ s.row }}{{ s.label }}</button>
+                  {% endif %}
+                </td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endfor %}
+
+    <div class="actions">
+      <button type="submit">Continue → Create Booking</button>
+      <a href="/flights">Back to flights</a>
+    </div>
+  </form>
+</div>
+
+<script>
+  const selected = new Set();
+  const hidden = document.getElementById("selected_seats");
+  const txt = document.getElementById("selected_text");
+
+  function refreshSelected(){
+    const arr = Array.from(selected);
+    hidden.value = arr.join(",");
+    txt.textContent = arr.length ? arr.join(", ") : "(none)";
+  }
+
+  document.querySelectorAll(".seat-btn.available").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const seat = btn.dataset.seat;
+      if (selected.has(seat)) {
+        selected.delete(seat);
+        btn.classList.remove("selected");
+      } else {
+        selected.add(seat);
+        btn.classList.add("selected");
+      }
+      refreshSelected();
+    });
+  });
+
+  refreshSelected();
+</script>
+</body>
+</html>

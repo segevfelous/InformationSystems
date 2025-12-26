@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Sign Up</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <div>
+    <h1>Sign Up</h1>
+    <h4 class="warning">{{message}}</h4>
+
+    <form action="/signup" method="POST">
+      <input placeholder="Email" autocomplete="off" type="email" name="email" required>
+      <br/><br/>
+      <input placeholder="Name" autocomplete="off" type="text" name="fname" required>
+      <br/><br/>
+      <input placeholder="Last Name" autocomplete="off" type="text" name="lname" required>
+      <br/><br/>
+      <input placeholder="Date Of Birth" autocomplete="off" type="date" name="date_of_birth" required>
+      <br/><br/>
+      <input placeholder="Passport" autocomplete="off" type="number" name="passport" required>
+      <br/><br/>
+      <input placeholder="Password" type="password" name="password" required>
+      <br/><br/>
+
+      <input type="submit" value="Create account">
+    </form>
+
+    <br/>
+    <a href="/login">Back to login</a>
+  </div>
+</body>
+</html>

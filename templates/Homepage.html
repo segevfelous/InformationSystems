@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FLYTAU - Home</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+  <div style="max-width:400px; margin:50px auto; text-align:center;">
+    <h1>Welcome to FLYTAU</h1>
+
+    {% if session.get("username") %}
+      <p>Welcome, {{ session["username"] }}</p>
+    {% else %}
+      <p>Please login or sign up</p>
+    {% endif %}
+
+    <hr><br>
+
+    <!-- Login / Signup -->
+    <a href="/login">
+      <button style="width:100%; padding:10px;">Login</button>
+    </a>
+    <br><br>
+
+    <a href="/signup">
+      <button style="width:100%; padding:10px;">Sign Up</button>
+    </a>
+
+    <br><br><hr><br>
+
+    <!-- Customer actions -->
+    <a href="/flights">
+      <button style="width:100%; padding:10px;">Flights</button>
+    </a>
+    <br><br>
+
+    <a href="/booking">
+      <button style="width:100%; padding:10px;">Booking</button>
+    </a>
+
+    <br><br><hr><br>
+
+    <!-- Admin actions -->
+    <a href="/administer">
+      <button style="width:100%; padding:10px;">Administer</button>
+    </a>
+    <br><br>
+
+    <a href="/forms">
+      <button style="width:100%; padding:10px;">Forms</button>
+    </a>
+
+    <br><br><hr><br>
+
+    <!-- Logout -->
+    {% if session.get("username") %}
+      <a href="/logout">
+        <button style="width:100%; padding:10px;">Logout</button>
+      </a>
+    {% endif %}
+
+  </div>
+
+</body>
+</html>

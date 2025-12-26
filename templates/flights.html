@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Available Flights</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <div>
+    <h1>Available Flights (Open for sale)</h1>
+
+    <form method="GET" action="/flights">
+      <label>Date:</label>
+      <input type="date" name="flight_date" value="{{ flight_date }}">
+      <br><br>
+
+      <label>From (Airport):</label>
+      <input type="text" name="departure_airport" maxlength="3" placeholder="TLV" value="{{ departure_airport }}">
+      <br><br>
+
+      <label>To (Airport):</label>
+      <input type="text" name="destination_airport" maxlength="3" placeholder="ATH" value="{{ destination_airport }}">
+      <br><br>
+
+      <input type="submit" value="Search">
+      <a href="/flights">Reset</a>
+    </form>
+
+    <br>
+
+    {% if flights|length == 0 %}
+      <p>No active flights found for your filters.</p>
+    {% else %}
+      <table border="1" cellpadding="8">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Departure</th>
+            <th>Landing</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Plane ID</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for f in flights %}
+            <tr>
+              <td>{{ f.Flight_Date }}</td>
+              <td>{{ f.Departure_Time }}</td>
+              <td>{{ f.Landing_Time }}</td>
+              <td>{{ f.Departure_Airport }}</td>
+              <td>{{ f.Destination_Airport }}</td>
+              <td>{{ f.Plane_ID }}</td>
+              <td>{{ f.status }}</td>
+              <br>
+              <a href="/seats?flight_date={{ f.Flight_Date }}&departure_time={{ f.Departure_Time }}">
+              Seats for {{ f.Departure_Airport }} → {{ f.Destination_Airport }}
+              ({{ f.Flight_Date }} {{ f.Departure_Time }})
+                <br><br>
+              </a>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+
+    <br>
+    <a href="/">Back to home</a>
+  </div>
+</body>
+</html>
